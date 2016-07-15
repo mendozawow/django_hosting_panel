@@ -37,10 +37,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # third party
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'debug_toolbar',
+    # internal apps
     'domains',
-    'dns',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,7 +92,7 @@ DATABASES = {
     'default': {
         'NAME': 'hosting_panel',
         'ENGINE': 'django.db.backends.mysql',
-        'USER': 'hosting_panel',
+        'USER': 'testing',
         'PASSWORD': '',
         'OPTIONS': {
           'autocommit': True,
