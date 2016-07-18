@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.generics import get_object_or_404
 from rest_framework.mixins import (
     RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, ListModelMixin, CreateModelMixin
@@ -9,6 +10,17 @@ from rest_framework.permissions import (
     IsAuthenticated,
 )
 from .serializers import DomainsSerializer, RecordsSerializer
+from django.contrib.auth.decorators import login_required
+
+
+@login_required(login_url='login/')  # if not logged in redirect to login/
+def home(request):
+    return render(request, 'home.html')
+
+
+@login_required(login_url='login/')
+def panel(request):
+    return render(request, 'panel.html')
 
 
 class DomainsViewSet(ModelViewSet):
@@ -30,12 +42,11 @@ class RecordsViewSet(
     serializer_class = RecordsSerializer
     permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self):
+        return Records.objects.filter(domain=self.kwargs['domain_pk'])
 
-class NestedRecordsViewSet(CreateModelMixin, ListModelMixin, GenericViewSet):
-    queryset = Records.objects.all()
-    serializer_class = RecordsSerializer
-    permission_classes = (IsAuthenticated,)
 
+class NestedRecordsViewSet(RecordsViewSet, CreateModelMixin, ListModelMixin, GenericViewSet):
     def get_domain(self, request, domain_pk=None):
         """
         Look for the referenced domain

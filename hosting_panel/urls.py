@@ -22,17 +22,24 @@ from rest_framework_nested.routers import NestedSimpleRouter
 from rest_framework.authtoken.views import obtain_auth_token
 from django.conf import settings
 
-from domains.views import DomainsViewSet, NestedRecordsViewSet
+from domains.views import DomainsViewSet, NestedRecordsViewSet, panel
 
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash=False)
 router.register(r'domains', DomainsViewSet)
 
 
-domains_router = NestedSimpleRouter(router, r'domains', lookup='domain')
+domains_router = NestedSimpleRouter(router, r'domains', lookup='domain', trailing_slash=False)
 domains_router.register(r'records', NestedRecordsViewSet)
 
 
 urlpatterns = [
+
+    url(r'^$', panel, name='panel'),
+
+    url(r'^panel/$', panel, name='panel'),
+
+    # Stock django auth forms
+    url('^', include('django.contrib.auth.urls')),
 
     url(r'^api/', include(router.urls)),
     url(r'^api/', include(domains_router.urls)),
@@ -42,15 +49,6 @@ urlpatterns = [
     url(r'^api/token/', obtain_auth_token, name='api-token'),
 
     url(r'^admin/', admin.site.urls),
-
-    # url(regex=r"^api/domains/$",
-    #     view=views.DomainsCreateReadView.as_view(),
-    #     ),
-    #
-    # url(
-    #     regex=r"^api/domains/(?P<id>[-\w]+)/$",
-    #     view=views.DomainsReadUpdateDeleteView.as_view(),
-    # ),
 ]
 
 if settings.DEBUG:

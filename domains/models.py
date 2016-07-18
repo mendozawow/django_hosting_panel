@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
+from .validators import validate_hostname, validate_record_type
 
 
 class Domains(models.Model):
@@ -17,13 +17,13 @@ class Domains(models.Model):
     #     help_text=_("Enter the hex color code, like #ccc or #cccccc")
     #     )
 
-    name = models.CharField(unique=True, max_length=255)
+    name = models.CharField(unique=True, max_length=255, validators=[validate_hostname])
     master = models.CharField(max_length=128, blank=True, null=True)
     last_check = models.IntegerField(blank=True, null=True)
     type = models.CharField(max_length=6, blank=True, null=True)
     notified_serial = models.IntegerField(blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
-    enabled = models.IntegerField()
+    enabled = models.IntegerField(default=1)
 
     class Meta:
         managed = False
@@ -33,7 +33,7 @@ class Domains(models.Model):
 class Records(models.Model):
     domain = models.ForeignKey(Domains, models.CASCADE)
     name = models.CharField(max_length=255, blank=True, null=True)
-    type = models.CharField(max_length=10, blank=True, null=True)
+    type = models.CharField(max_length=10, blank=True, null=True, validators=[validate_record_type])
     content = models.TextField(blank=True, null=True)
     ttl = models.IntegerField(blank=True, null=True)
     prio = models.IntegerField(blank=True, null=True)

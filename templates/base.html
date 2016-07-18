@@ -1,0 +1,18 @@
+{# simple base.html #}
+{% load staticfiles %}
+<html>
+<head>
+    <title>
+        {% block title %}Hosting Panel{% endblock title %}
+    </title>
+    {% block stylesheets %}
+    {% endblock stylesheets %}
+</head>
+<body>
+<div class="content">
+    {% block content %}
+        <h1>Hosting Panel</h1>
+    {% endblock content %}
+</div>
+</body>
+</html>

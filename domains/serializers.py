@@ -1,59 +1,48 @@
 from rest_framework import serializers
-from domains.models import Domains
+from .models import Domains, Records
+from .validators import validate_record_content, validate_server_name
 
 
-class DomainsSerializer(serializers.Serializer):
-    pk = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(required=False, allow_blank=True, max_length=255)
-    enabled = serializers.IntegerField()
-
-    def create(self, validated_data):
-        """
-        Create and return a new `Domain` instance, given the validated data.
-        """
-        return Domains.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Update and return an existing `Domain` instance, given the validated data.
-        """
-        instance.name = validated_data.get('name', instance.name)
-        instance.enabled = validated_data.get('enabled', instance.enabled)
-        instance.save()
-        return instance
+class DomainsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Domains
+        fields = ('id', 'name')
+        read_only_fields = ('id',)
 
 
-class RecordsSerializer(serializers.Serializer):
-    pk = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(required=False, allow_blank=True, max_length=255)
-    # type should be a choice field
-    type = serializers.CharField(allow_blank=True, max_length=10,)
-    content = serializers.CharField(allow_blank=True,)
-    ttl = serializers.IntegerField(allow_null=True,)
-    prio = serializers.IntegerField(allow_null=True,)
-    change_date = serializers.IntegerField(allow_null=True,)
-    disabled = serializers.IntegerField(allow_null=True,)
-    ordername = serializers.CharField(max_length=255, allow_blank=True,)
-    auth = serializers.IntegerField(allow_null=True,)
+class RecordsSerializer(serializers.ModelSerializer):
 
-    def create(self, validated_data):
+    def validate(self, attrs):
         """
-        Create and return a new `Domain` instance, given the validated data.
+        Validate the record content based on the record type
         """
-        return Domains.objects.create(**validated_data)
+        # FIXME must be a better way to do this, its ugly
+        # if the record is being created, there is no instance to domain and the type must be grabbed from the attrs
+        # if the record exists, the domain related object also exists, and the type is also defined
+        # if the record is being updated and type and content are being set, we need to check if the content
+        # is valid for that specific type
+        def get_domain():
+            if self.instance is not None:
+                return self.instance.domain.name
+            return Domains.objects.get(pk=self.context['view'].kwargs['domain_pk'])
 
-    def update(self, instance, validated_data):
-        """
-        Update and return an existing `Domain` instance, given the validated data.
-        """
-        instance.name = validated_data.get('name', instance.name)
-        instance.type = validated_data.get('type', instance.type)
-        instance.content = validated_data.get('content', instance.content)
-        instance.ttl = validated_data.get('ttl', instance.ttl)
-        instance.prio = validated_data.get('prio', instance.prio)
-        instance.change_date = validated_data.get('name', instance.change_date)
-        instance.disabled = validated_data.get('name', instance.disabled)
-        instance.ordername = validated_data.get('name', instance.ordername)
-        instance.auth = validated_data.get('name', instance.auth)
-        instance.save()
-        return instance
+        def get_record_type():
+            record_type = attrs.get('type', None)
+            if record_type is None:
+                record_type = self.instance.type
+            return record_type
+
+        if attrs.get('name', None) is not None:
+            if not validate_server_name(get_domain().name, attrs['name']):
+                raise serializers.ValidationError("Invalid record name. Must contain the domain name.")
+
+        if attrs.get('content', None) is not None:
+            if not validate_record_content(get_record_type(), attrs['content']):
+                raise serializers.ValidationError("Invalid content for this record type.")
+
+        return attrs
+
+    class Meta:
+        model = Records
+        read_only_fields = ('id', 'domain')
+        exclude = ('domain',)
