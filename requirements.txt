@@ -5,3 +5,5 @@ django-rest-auth
 mysql-python
 django-debug-toolbar
 drf-nested-routers=0.11.1
+django-rest-assured
+factory_boy

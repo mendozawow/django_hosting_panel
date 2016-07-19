@@ -56,8 +56,17 @@ Ext.define('AdminPanel.view.Header', {
             handler: function() {
                 Ext.Msg.confirm('logout?', 'are you sure you want to logout?', function(answer) {
                     if (answer === "yes") {
-                        //refreshes the page, erasing memory proxy
-                        window.location.href = "/rest-auth/logout";
+                        Ext.Ajax.request({
+                            url: '/rest-auth/logout/',
+                            method: 'POST',
+                            params: {
+                                _token: getToken()
+                            },
+                            success: function(response){
+                                //refreshes the page, erasing memory proxy
+                                window.location.href = "/";
+                            }
+                        });
                     }
                 });
             }

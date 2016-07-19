@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Domains, Records
 from .validators import validate_record_content, validate_server_name
 
@@ -6,7 +7,8 @@ from .validators import validate_record_content, validate_server_name
 class DomainsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domains
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'enabled')
+        required_field_names = ('name',)
         read_only_fields = ('id',)
 
 

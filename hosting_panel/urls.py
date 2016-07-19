@@ -16,7 +16,7 @@ Including another URLconf
 
 from django.conf.urls import include, url
 from django.contrib import admin
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import DefaultRouter, SimpleRouter
 from rest_framework_nested.routers import NestedSimpleRouter
 
 from rest_framework.authtoken.views import obtain_auth_token
@@ -24,12 +24,12 @@ from django.conf import settings
 
 from domains.views import DomainsViewSet, NestedRecordsViewSet, panel
 
-router = DefaultRouter(trailing_slash=False)
-router.register(r'domains', DomainsViewSet)
+domains_router = SimpleRouter(trailing_slash=False)
+domains_router.register(r'domains', DomainsViewSet)
 
 
-domains_router = NestedSimpleRouter(router, r'domains', lookup='domain', trailing_slash=False)
-domains_router.register(r'records', NestedRecordsViewSet)
+records_router = NestedSimpleRouter(domains_router, r'domains', lookup='domain', trailing_slash=False)
+records_router.register(r'records', NestedRecordsViewSet, base_name='records')
 
 
 urlpatterns = [
@@ -41,8 +41,8 @@ urlpatterns = [
     # Stock django auth forms
     url('^', include('django.contrib.auth.urls')),
 
-    url(r'^api/', include(router.urls)),
     url(r'^api/', include(domains_router.urls)),
+    url(r'^api/', include(records_router.urls)),
 
     url(r'^rest-auth/', include('rest_auth.urls')),
 

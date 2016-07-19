@@ -13,12 +13,12 @@ from .serializers import DomainsSerializer, RecordsSerializer
 from django.contrib.auth.decorators import login_required
 
 
-@login_required(login_url='login/')  # if not logged in redirect to login/
+@login_required(login_url='/login/')  # if not logged in redirect to login/
 def home(request):
     return render(request, 'home.html')
 
 
-@login_required(login_url='login/')
+@login_required(login_url='/login/')
 def panel(request):
     return render(request, 'panel.html')
 
@@ -36,14 +36,11 @@ class DomainsViewSet(ModelViewSet):
 
 
 class RecordsViewSet(
-    RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, ListModelMixin, GenericViewSet
+    RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet
 ):
     queryset = Records.objects.all()
     serializer_class = RecordsSerializer
     permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        return Records.objects.filter(domain=self.kwargs['domain_pk'])
 
 
 class NestedRecordsViewSet(RecordsViewSet, CreateModelMixin, ListModelMixin, GenericViewSet):
