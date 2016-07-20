@@ -2,20 +2,20 @@
 
 Django RESTful API for a multi-user and multi-domain manager for PowerDNS. Javascript front-end built with ExtJS framework
 
-### Prerequisities
+## Prerequisities
 
 ```
 Docker
 Docker-Compose
 ```
 
-### Installing
+## Installing
 Go to the root directory and type
 ```
 docker-compose up
 ```
 
-### Running
+## Running
 
 To get the IP of the web container type
 ```
@@ -27,18 +27,18 @@ To get the IP of the PowerDNS container type
 docker inspect --format '{{ .NetworkSettings.IPAddress }}' pdns
 ```
 
-## Testing the PowerDNS server
+### Testing the PowerDNS server
 ```
 dig @powerdns_container_ip name_to_test
 ```
 
-## Testing the Web App
+### Testing the Web App
 Open your browser and type the web container ip followed by the port 8000
 ```
 http://web_container_ip:8000
 ```
 
-### Testing
+## Testing
 
 Access the container:
 ```
