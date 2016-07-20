@@ -1,0 +1,47 @@
+version: '2'
+services:
+    db:
+        container_name: db
+        #build: data/.
+        image: mysql:5.7
+        ports:
+            - "3307:3306"
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+        #   MYSQL_DATABASE: hosting_panel
+        #   MYSQL_USER: hosting_panel
+        #   MYSQL_PASSWORD: hosting_panel
+        volumes:
+            - "./.data/db:/var/lib/mysql"
+        #volumes:
+        #    - ./data:/docker-entrypoint-initdb.d
+        restart: always
+
+    pdns:
+        container_name: pdns
+        image: secns/pdns
+        build: pdns/.
+        depends_on:
+          - db
+        links:
+          - db:db
+        ports:
+          - "5353"
+        environment:
+            - PDNS_ALLOW_AXFR_IPS=127.0.0.1
+            - PDNS_DISTRIBUTOR_THREADS=3
+            - PDNS_CACHE_TTL=20
+            - PDNS_RECURSIVE_CACHE_TTL=10
+
+    web:
+        container_name: web
+        build: django/.
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+          - ./django/.:/code
+        ports:
+          - "8000:8000"
+        depends_on:
+          - pdns
+        links:
+          - db:db
