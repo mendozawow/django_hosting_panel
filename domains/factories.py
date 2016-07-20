@@ -5,6 +5,9 @@ from . import models
 
 
 class User(factory.DjangoModelFactory):
+    """
+        A Users Factory with default values for testing.
+    """
     class Meta:
         model = auth.get_user_model()
         exclude = ('raw_password',)
@@ -19,7 +22,9 @@ class User(factory.DjangoModelFactory):
 
 
 class Domains(factory.DjangoModelFactory):
-
+    """
+        A Domains Factory with default values for testing.
+    """
     class Meta:
         model = models.Domains
 
@@ -28,25 +33,27 @@ class Domains(factory.DjangoModelFactory):
 
 
 class Records(factory.DjangoModelFactory):
-
+    """
+    A Records Factory with default values for testing.
+    """
     class Meta:
         model = models.Records
 
     domain = factory.SubFactory(Domains)
     name = 'test.'
-    # name = factory.LazyAttribute(lambda domain: 'test{0}.{1}'.format(domain).lower())
     type = 'A'
     content = '127.0.0.1'
     ttl = fuzzy.FuzzyInteger(low=60, high=120, step=1)
     prio = 0
     change_date = 0
     disabled = 0
+    auth = 1
 
-    @factory.post_generation
-    def name(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        if extracted:
-            for name in extracted:
-                self.name = name + self.domain.name
+    # @factory.post_generation
+    # def name(self, create, extracted, **kwargs):
+    #     if not create:
+    #         return
+    #
+    #     if extracted:
+    #         for name in extracted:
+    #             self.name = name + self.domain.name
