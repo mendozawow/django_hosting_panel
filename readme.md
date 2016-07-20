@@ -14,9 +14,38 @@ Go to the root directory and type
 ```
 docker-compose up
 ```
-## Running the tests
 
-Inside the django directory, just type:
+### Running
+
+To get the IP of the web container type
+```
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' web
+```
+
+To get the IP of the PowerDNS container type
+```
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' pdns
+```
+
+## Testing the PowerDNS server
+```
+dig @powerdns_container_ip name_to_test
+```
+
+## Testing the Web App
+Open your browser and type the web container ip followed by the port 8000
+```
+http://web_container_ip:8000
+```
+
+### Testing
+
+Access the container:
+```
+docker exec -i -t web /bin/bash
+```
+
+Inside the /code directory, just type:
 ```
 ./manage.py test --keepdb --failfast
 ```
