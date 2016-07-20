@@ -1,6 +1,6 @@
 # Django Hosting Panel for PowerDNS
 
-Multi-user web application to manage the registration of domains and DNS records.
+Django RESTful API for a multi-user and multi-domain manager for PowerDNS. Javascript front-end built with ExtJS framework
 
 ### Prerequisities
 
