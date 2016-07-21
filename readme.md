@@ -27,19 +27,25 @@ To get the IP of the PowerDNS container type
 docker inspect --format '{{ .NetworkSettings.IPAddress }}' pdns
 ```
 
-### Testing the PowerDNS server
-```
-dig @powerdns_container_ip name_to_test
-```
-
-### Testing the Web App
 Open your browser and type the web container ip followed by the port 8000
 ```
 http://web_container_ip:8000
 ```
+Enter the testing credentials:
+user: **test**
+```
+user: test
+password: test_pass
+```
 
 ## Testing
 
+### Testing the PowerDNS server
+Open a console and fill the following command, changing the container IP and entering the domain name you want to test
+```
+dig @powerdns_container_ip and  name_to_test
+```
+### Testing the Django web app
 Access the container:
 ```
 docker exec -i -t web /bin/bash
