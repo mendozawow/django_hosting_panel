@@ -138,7 +138,7 @@ CREATE TABLE `auth_user` (
 -- ----------------------------
 -- Records of auth_user
 -- ----------------------------
-INSERT INTO `auth_user` VALUES ('1', 'pbkdf2_sha256$24000$CuNTViKzUJux$HVcX4/I0viTZSRQi17t2qCh/SN8jrJvzGX817iYJBhE=', null, '0', 'test', 'Testing', 'User', 'test@test.com', '0', '1', '2016-07-15 14:36:03.000000');
+INSERT INTO `auth_user` VALUES ('1', 'pbkdf2_sha256$24000$HIIqg9KJBAwN$X283SmfMtYsuQ4m+Da/LE7lAsCQEP+w0fL6/zwHSN4I=', null, '0', 'test', 'Testing', 'User', 'test@test.com', '0', '1', '2016-07-15 14:36:03.000000');
 
 -- ----------------------------
 -- Table structure for `auth_user_groups`
